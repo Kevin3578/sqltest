@@ -18,10 +18,11 @@ order_payments as (
         order_id,
 
         {% for payment_method in payment_methods -%}
-        sum(case when payment_method = '{{ payment_method }}' then amount else 0 end) as {{ payment_method }}_amount,
+        sum(case when payment_method = '{{ payment_method }}'
+         then amount else 0 end) as {{ payment_method }}_amount,
         {% endfor -%}
 
-        sum(amount) as total_amount
+        sum(amount) as day
 
     from payments
 
@@ -43,7 +44,7 @@ final as (
 
         {% endfor -%}
 
-        order_payments.total_amount as amount
+        order_payments.total_amount as day
 
     from orders
 
