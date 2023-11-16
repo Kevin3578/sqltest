@@ -11,7 +11,7 @@ with source as (
 renamed as (
 
     select
-        id as payment_id,
+        id as date,
         order_id,
         payment_method,
 
