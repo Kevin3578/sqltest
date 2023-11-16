@@ -1,0 +1,36 @@
+name: Lint SQL Files
+
+on: pull_request
+
+jobs:
+  sql-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetches all history for all branches and tags
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install SQLFluff
+      run: pip install sqlfluff
+
+    - name: Get Changed SQL Files
+      id: file_changes
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '.sql$' | xargs)
+        echo "::set-output name=files::$changed_files"
+      
+    - name: Lint Changed SQL Files
+      run: |
+        if [ -n "${{ steps.file_changes.outputs.files }}" ]; then
+          sqlfluff lint ${{ steps.file_changes.outputs.files }} --dialect postgres
+        else
+          echo "No SQL files changed"
+        fi
