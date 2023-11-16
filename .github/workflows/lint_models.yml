@@ -26,6 +26,7 @@ jobs:
         git fetch origin ${{ github.base_ref }}
         changed_files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '.sql$' | xargs)
         echo "::set-output name=files::$changed_files"
+        echo "Changed files: $changed_files"
       
     - name: Lint Changed SQL Files
       run: |
